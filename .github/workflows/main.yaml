@@ -1,0 +1,43 @@
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Hello World
+        run: echo "Hello World"
+  deploy-infra:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name:
+        run: |
+          echo "Deploying infrastructure"
+  push-to-ecr:
+    needs:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Build and Push to ECR
+        run: |
+          echo "Building and pushing to ECR"
+  deploy-supply-app:
+    needs:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Deploy Supply App
+        run: |
+          echo "Deploying Supply App"
+  deploy-procurement-app:
+    needs:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Deploy Procurement App
+        run: |
+          echo "Deploying Procurement App"

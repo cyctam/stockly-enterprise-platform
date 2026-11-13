@@ -1,0 +1,30 @@
+syntax = "proto3";
+
+package endfield.inventory.procurement;
+
+option java_multiple_files = true;
+option java_package = "com.endfield.inventory.procurement";
+
+service ProcurementInventoryService {
+  rpc GetMaterialById (GetMaterialByIdRequest) returns (MaterialResponse);
+  rpc GetMaterialByName (GetMaterialByNameRequest) returns (MaterialResponse);
+}
+
+message GetMaterialByIdRequest {
+  string id = 1;
+}
+
+message GetMaterialByNameRequest {
+  string name = 1;
+}
+
+message MaterialResponse {
+  string id = 1;
+  string name = 2;
+  string category = 3;
+  string unit = 4;
+  int32 currentStock = 5;
+  int32 minStock = 6;
+  string status = 7;
+  string updatedAt = 8;
+}

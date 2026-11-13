@@ -1,0 +1,92 @@
+on:
+  push:
+    branches:
+      - dev
+  workflow_dispatch:
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  example-cache:
+    name: Example Cache (Terraform + Node)
+    runs-on: ubuntu-latest
+
+    env:
+      NODE_VERSION: "20"
+      AWS_REGION: us-east-1
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: ${{ github.ref }}
+
+      # Node.js + npm cache example
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Restore npm cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.npm
+            **/node_modules
+          key: npm-${{ runner.os }}-${{ env.NODE_VERSION }}-${{ hashFiles('**/package-lock.json', '**/npm-shrinkwrap.json') }}
+          restore-keys: |
+            npm-${{ runner.os }}-${{ env.NODE_VERSION }}-
+
+      - name: Install Node dependencies (example)
+        if: hashFiles('**/package-lock.json', '**/npm-shrinkwrap.json') != ''
+        run: |
+          if [ -f "package-lock.json" ] || [ -f "npm-shrinkwrap.json" ]; then
+            npm ci
+          else
+            echo "No package-lock.json or npm-shrinkwrap.json found, skipping npm ci"
+          fi
+
+      # Terraform cache example
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform-version: 1.5.0
+
+      # Cache Terraform plugin directory and .terraform directories
+      - name: Cache Terraform plugins and modules
+        id: cache-terraform
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.terraform.d/plugin-cache
+            **/.terraform
+          key: terraform-${{ runner.os }}-v1-${{ hashFiles('infrastructure/**/*.tf', 'infrastructure/.terraform.lock.hcl') }}
+          restore-keys: |
+            terraform-${{ runner.os }}-v1-
+
+      # Optional: configure plugin cache dir for Terraform
+      - name: Configure Terraform plugin cache dir
+        run: |
+          mkdir -p ~/.terraform.d/plugin-cache
+          echo 'plugin_cache_dir = "~/.terraform.d/plugin-cache"' > ~/.terraformrc
+
+      # Example Terraform commands (init/validate/plan) using cache
+      - name: Terraform init (example)
+        working-directory: ./infrastructure
+        run: terraform init -input=false
+
+      - name: Terraform validate (example)
+        working-directory: ./infrastructure
+        run: terraform validate
+
+      - name: Terraform plan (example, no apply)
+        working-directory: ./infrastructure
+        run: terraform plan -input=false
+
+      - name: Cache summary
+        run: |
+          echo "Node/npm cache and Terraform cache steps completed."
+          echo "This workflow is intended as a reusable template for caching in other workflows."

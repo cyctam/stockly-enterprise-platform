@@ -1,0 +1,72 @@
+version: '3.9'
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: stockly-postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: inventory
+    ports:
+      - "5433:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+  inventory-service:
+    build:
+      context: ./services/inventory
+    container_name: stockly-inventory
+    ports:
+      - "4001:3000"
+    environment:
+      - PORT=3000
+      - DB_HOST=postgres
+      - DB_PORT=5432
+      - DB_USER=postgres
+      - DB_PASSWORD=postgres
+      - DB_NAME=inventory
+      - DB_SYNC=true
+      - FRONTEND_ORIGIN=http://localhost:3000
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  procurement-service:
+    build:
+      context: ./services/procurement
+    container_name: stockly-procurement
+    ports:
+      - "4002:3000"
+    environment:
+      - PORT=3000
+      - DB_HOST=postgres
+      - DB_PORT=5432
+      - DB_USER=postgres
+      - DB_PASSWORD=postgres
+      - DB_NAME=inventory
+      - DB_SYNC=true
+      - FRONTEND_ORIGIN=http://localhost:3000
+      - INVENTORY_GRPC_URL=inventory-service:3000
+    depends_on:
+      postgres:
+        condition: service_healthy
+  web:
+    build:
+      context: ./services/web
+    container_name: stockly-web
+    ports:
+      - "3000:3000"
+    environment:
+      - VITE_INVENTORY_API_URL=http://localhost:4001
+      - VITE_PROCUREMENT_API_URL=http://localhost:4002
+    depends_on:
+      - inventory-service
+      - procurement-service
+
+volumes:
+  pgdata:

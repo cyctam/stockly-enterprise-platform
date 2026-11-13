@@ -1,0 +1,93 @@
+on:
+  push:
+    branches: dev
+    paths:
+      - "infrastructure/**"
+      - ".github/workflows/terraform-deploy.yaml"
+
+permissions:
+  contents: read
+  id-token: write
+
+env:
+  AWS_REGION: us-east-1
+  # S3 bucket where Terraform state is stored
+  TF_BACKEND_BUCKET: ${{ vars.TF_BACKEND_BUCKET }}
+  # (Optional) prefix within the bucket, e.g. "my-repo" – can be empty
+  TF_BACKEND_KEY_PREFIX: ${{ vars.TF_BACKEND_KEY_PREFIX }}
+  # Environment fallback if workflow input is not used
+  TF_ENVIRONMENT_DEFAULT: ${{ vars.TF_ENVIRONMENT }}
+
+jobs:
+  terraform:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.5.7
+      - run: terraform init
+      - run: terraform plan
+      - run: terraform apply
+  terraform-s3:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Login to AWS
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume:
+          aws-access-key-id:
+          aws-secret-access-key:
+          aws-region:
+      - uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.5.7
+      - name: Set deployment environment and state key
+        id: env-setup
+        run: |
+          # Resolve environment: prefer workflow input, then TF_ENVIRONMENT_DEFAULT, default to "dev"
+          ENV_INPUT="${{ github.event.inputs.environment }}"
+          ENV_DEFAULT="${TF_ENVIRONMENT_DEFAULT:-dev}"
+          ENVIRONMENT="${ENV_INPUT:-$ENV_DEFAULT}"
+
+          # Basic validation
+          : "${TF_BACKEND_BUCKET:?TF_BACKEND_BUCKET GitHub variable is required}"
+
+          # Default key prefix to repository name if not set
+          if [ -z "${TF_BACKEND_KEY_PREFIX}" ]; then
+            TF_BACKEND_KEY_PREFIX="${GITHUB_REPOSITORY}"
+          fi
+
+          # Simple, deterministic key:
+          # <prefix>/<environment>/terraform.tfstate
+          TFSTATE_KEY="${TF_BACKEND_KEY_PREFIX}/${ENVIRONMENT}/terraform.tfstate"
+
+          echo "ENVIRONMENT=${ENVIRONMENT}"        >> "$GITHUB_ENV"
+          echo "TFSTATE_KEY=${TFSTATE_KEY}"        >> "$GITHUB_ENV"
+
+          echo "environment=${ENVIRONMENT}"        >> "$GITHUB_OUTPUT"
+          echo "tfstate_key=${TFSTATE_KEY}"        >> "$GITHUB_OUTPUT"
+      - name: Show resolved backend config
+        run: |
+          echo "Using Terraform backend configuration:"
+          echo "  AWS region : ${AWS_REGION}"
+          echo "  S3 bucket  : ${TF_BACKEND_BUCKET}"
+          echo "  State key  : ${TFSTATE_KEY}"
+          echo "  Environment: ${ENVIRONMENT}"
+
+      - name: Terraform init with S3 backend
+        working-directory: ./infrastructure
+        run: |
+          terraform init \
+            -backend-config="bucket=${TF_BACKEND_BUCKET}" \
+            -backend-config="key=${TFSTATE_KEY}" \
+            -backend-config="region=${AWS_REGION}"
+
+      - name: Deploy with deploy.sh (uses S3 backend state)
+        working-directory: ./infrastructure
+        env:
+          TF_VAR_environment: ${{ steps.env-setup.outputs.environment }}
+        run: |
+          chmod +x ./deploy.sh
+          ./deploy.sh deploy all
