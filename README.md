@@ -282,13 +282,13 @@ Start each service in a separate terminal.
 **Inventory Service**
 
 ```bash
-npm run start:dev --workspace=services/api-server
+npm run start --workspace=services/api-server
 ```
 
 **Procurement Service**
 
 ```bash
-npm run start:dev --workspace=services/publisher
+npm run start --workspace=services/publisher
 ```
 
 **Frontend Dashboard**
