@@ -1,345 +1,371 @@
-# Endfield Ltd Supply Chain Dashboard
 
-A lightweight cloud-native supply chain management demo application for building and factory materials such as cement, coal, steel, sand, and Originium.
+# Stockly Enterprise | Cloud-Native Supply Chain Platform
 
-It uses a serverless-first architecture with small Nest.js microservices, React frontend, AWS Lambda background jobs, and AWS managed services.
+**A Cloud & DevOps Engineering Project**
 
----
+Stockly is a cloud-native supply chain management platform designed to demonstrate modern Cloud Computing, DevOps practices, and microservices architecture.
 
-## Features
-
-* Inventory tracking
-* Low stock alerts
-* Purchase request workflow
-* Stock inflow simulation
-* Dashboard summaries
-* Material stock movement logs
-* Cloud-native deployment architecture
+The project combines application development with cloud infrastructure automation, containerization, CI/CD pipelines, and Infrastructure as Code (IaC) to simulate how a scalable production-ready system can be designed, deployed, and managed in a cloud environment.
 
 ---
 
-## Tech Stack
+## Project Overview
 
-### Frontend
+Stockly is more than an inventory management application. It is an engineering project focused on building, deploying, and managing a distributed application using modern cloud and DevOps technologies.
 
-* React Router
-* Amplify hosting
-* REST API integration
+The platform provides inventory tracking, stock movement management, procurement workflows, and operational monitoring through a centralized dashboard.
 
-### Backend
+From an infrastructure perspective, the project explores how independent services can be containerized, connected, automated, and deployed to cloud infrastructure.
 
-* Nest.js Inventory Service
-* Nest.js Procurement Service
-* Dockerized microservices
-* ECS / ECS Service Connect ready
+## Engineering Focus
 
-### Serverless
+This project focuses on the following engineering areas:
 
-* AWS Lambda
-* EventBridge scheduled CRON trigger
-* SQS queue integration
+- **Cloud Computing** — Designing and deploying scalable application infrastructure on AWS.
+- **DevOps Engineering** — Automating development, testing, building, and deployment workflows.
+- **Microservices Architecture** — Separating application responsibilities into independent services.
+- **Infrastructure as Code (IaC)** — Managing cloud infrastructure using Terraform.
+- **Containerization** — Packaging applications and services using Docker.
+- **CI/CD Automation** — Building automated pipelines using GitHub Actions.
+- **Cloud Infrastructure Management** — Exploring networking, compute, storage, and managed database services.
 
-### Data Storage
+## Core Features
 
-* RDS for relational business data
-* DynamoDB for alerts and logs
-* S3 for report exports and static assets
+### Application Features
+
+- Inventory and material management.
+- Stock movement tracking.
+- Purchase request management.
+- Procurement workflow management.
+- Stock level alerts.
+- Centralized operational dashboard.
+
+### Cloud & DevOps Features
+
+- Docker-based application containerization.
+- Microservices-oriented architecture.
+- Infrastructure provisioning using Terraform.
+- CI/CD workflow automation using GitHub Actions.
+- PostgreSQL database infrastructure.
+- AWS cloud deployment architecture.
+- Environment-based application configuration.
 
 ---
 
-# Project Structure
+## System Architecture
+
+Stockly follows a microservices-based architecture where each service operates independently and communicates through defined service interfaces.
+
+### Application Components
+
+| Component | Responsibility |
+|---|---|
+| Dashboard | React-based frontend for inventory and procurement operations. |
+| Inventory Service | Handles materials, stock movements, and inventory alerts. |
+| Procurement Service | Manages purchase requests and approval workflows. |
+| Event Simulator | Simulates stock delivery events and background processing. |
+| PostgreSQL | Stores application and operational data. |
+
+### Cloud Architecture
+
+The target cloud infrastructure is designed around AWS services.
+
+| AWS Service | Purpose |
+|---|---|
+| Amazon VPC | Network isolation and infrastructure networking. |
+| Amazon ECS | Containerized application deployment. |
+| Amazon EC2 | Compute infrastructure where required. |
+| Amazon RDS | Managed PostgreSQL database. |
+| Amazon S3 | Object and static asset storage. |
+| AWS Lambda | Serverless background processing. |
+
+---
+
+## Technology Stack
+
+### Application Development
+- React
+- Vite
+- Tailwind CSS
+- Node.js
+- NestJS
+- TypeScript
+- gRPC
+
+### Database
+- PostgreSQL
+- TypeORM
+
+### Cloud Computing
+- Amazon Web Services (AWS)
+- Amazon VPC
+- Amazon ECS
+- Amazon EC2
+- Amazon RDS
+- Amazon S3
+- AWS Lambda
+
+### DevOps & Infrastructure
+- Docker
+- Docker Compose
+- Terraform
+- GitHub Actions
+- Git
+- CI/CD Pipelines
+- Infrastructure as Code (IaC)
+
+---
+
+## Repository Structure
 
 ```text
-endfield-supply-chain/
-├── Backend
-│   ├── lambdas
-│   │   ├── libs
-│   │   │   └── materialPool.js
-│   │   ├── README.md
-│   │   ├── sqsToInventory
-│   │   │   └── index.js
-│   │   └── stockInflow
-│   │       └── index.js
-│   └── microservice
-│       ├── inventory-service
-│       │   ├── Dockerfile
-│       │   ├── jest.config.js
-│       │   ├── nest-cli.json
-│       │   ├── package.json
-│       │   ├── package-lock.json
-│       │   ├── src
-│           ├── .env.example
-│       │   ├── tsconfig.build.json
-│       │   └── tsconfig.json
-│       └── procurement-service
-│           ├── Dockerfile
-│           ├── jest.config.js
-│           ├── nest-cli.json
-│           ├── package.json
-│           ├── package-lock.json
-│           ├── src
-│           ├── .env.example
-│           ├── tsconfig.build.json
-│           └── tsconfig.json
-├── Frontend
-│   ├── index.html
-│   ├── package.json
-│   ├── postcss.config.js
-│   ├── src
-│   ├── tailwind.config.js
-│   └── vite.config.js
-├── infrastructure
-│   ├── modules
-│   └── stacks
-└── README.md
+stockly-supply-chain/
+├── apps/
+│   └── dashboard/          # React frontend application
+│
+├── services/
+│   ├── api-server/         # Inventory microservice
+│   ├── publisher/          # Procurement microservice
+│   └── simulator/          # Stock event simulator
+│
+├── terraform/              # AWS Infrastructure as Code
+├── docker-compose.yml      # Local container orchestration
+└── package.json            # Project dependencies
 ```
 
 ---
 
-# Core Services
+## DevOps Workflow
 
-## Frontend
+The project is designed around a modern DevOps workflow.
 
-The frontend provides:
-
-* Login page
-* Dashboard page
-* Materials list
-* Material detail page
-* Purchase request pages
-* Stock inflow logs
-* Alerts page
-
-## Inventory Service
-
-Responsible for:
-
-* Material CRUD
-* Stock in and stock out
-* Stock movement history
-* Low stock alert generation
-* Dashboard summaries
-
-## Procurement Service
-
-Responsible for:
-
-* Purchase request creation
-* Purchase request listing
-* Status updates
-* Approval and receiving workflow
-
-## Lambda Stock Simulator
-
-Responsible for:
-
-* Simulating incoming material deliveries
-* Sending stock inflow events to Inventory Service or SQS
-* Running on EventBridge CRON schedule
-
----
-
-# Docker Deployment
-
-## Prerequisites
-
-* Docker
-* Docker Compose
-* Node.js 20+
-* npm or pnpm
-
----
-
-## Sample docker-compose.yml
-
-```yaml
-version: '3.9'
-
-services:
-  frontend:
-    build:
-      context: ./frontend
-    ports:
-      - "3000:3000"
-    env_file:
-      - ./frontend/.env
-    depends_on:
-      - inventory-service
-      - procurement-service
-
-  inventory-service:
-    build:
-      context: ./inventory-service
-    ports:
-      - "3001:3000"
-    env_file:
-      - ./inventory-service/.env
-
-  procurement-service:
-    build:
-      context: ./procurement-service
-    ports:
-      - "3002:3000"
-    env_file:
-      - ./procurement-service/.env
-
-  lambda-stock-simulator:
-    build:
-      context: ./lambda-stock-simulator
-    env_file:
-      - ./lambda-stock-simulator/.env
-    depends_on:
-      - inventory-service
+```text
+Developer
+    |
+    v
+Git Repository (GitHub)
+    |
+    v
+GitHub Actions
+    |
+    +---- Automated Testing
+    |
+    +---- Build Application
+    |
+    +---- Build Docker Images
+    |
+    v
+Container Registry
+    |
+    v
+AWS Cloud Infrastructure
+    |
+    +---- Application Services
+    |
+    +---- Database
+    |
+    +---- Storage
+    |
+    v
+Application Deployment
 ```
 
+The intended workflow demonstrates how code changes can move from source control through automated validation and container builds into a cloud deployment environment.
+
 ---
 
-## Run Locally
+## Infrastructure as Code
+
+Terraform is used to define and manage the target cloud infrastructure.
+
+The infrastructure configuration is intended to support:
+
+- Cloud networking and VPC configuration.
+- Compute resource provisioning.
+- Container deployment infrastructure.
+- Managed database resources.
+- Storage infrastructure.
+- Reproducible infrastructure environments.
+
+### Terraform Workflow
 
 ```bash
-# Build all services
-Docker Compose build
+cd terraform
 
-# Start all services
-Docker Compose up
+terraform init
+terraform validate
+terraform plan
+terraform apply
+```
 
-# Run detached
-Docker Compose up -d
+Infrastructure changes should be reviewed before applying them to a cloud environment.
 
-# Stop all services
-Docker Compose down
+---
+
+## Containerization
+
+Docker is used to package application services into consistent and portable environments.
+
+Docker Compose provides a local development environment for running the required services and database dependencies.
+
+Start the local infrastructure:
+
+```bash
+docker compose up -d
+```
+
+Stop the local infrastructure:
+
+```bash
+docker compose down
 ```
 
 ---
 
-# Sample Dockerfiles
+## CI/CD Pipeline
 
-## Frontend Dockerfile
+GitHub Actions is the planned CI/CD automation platform for this project.
 
-```dockerfile
-FROM node:20-alpine
+The intended pipeline includes:
 
-WORKDIR /app
+1. Source code integration through GitHub.
+2. Automated code validation and testing.
+3. Application build process.
+4. Docker image creation.
+5. Container image publishing.
+6. Deployment to the target cloud environment.
 
-COPY package*.json ./
-RUN npm install
+The pipeline configuration will evolve as deployment automation is implemented.
 
-COPY . .
+---
 
-EXPOSE 3000
+## Local Development
 
-CMD ["npm", "run", "dev", "--", "--host"]
+### Prerequisites
+
+- Node.js v20+
+- npm
+- Docker
+- Docker Compose
+- Git
+
+### Installation
+
+**1. Clone the repository**
+
+```bash
+git clone https://github.com/cyctam/stockly-enterprise-platform.git
 ```
 
-## Nest.js Service Dockerfile
+**2. Navigate to the project directory**
 
-```dockerfile
-FROM node:20-alpine
-
-WORKDIR /app
-
-COPY package*.json ./
-RUN npm install
-
-COPY . .
-
-RUN npm run build
-
-EXPOSE 3000
-
-CMD ["npm", "run", "start:prod"]
+```bash
+cd stockly-enterprise-platform
 ```
 
-## Lambda Simulator Dockerfile
+**3. Start the database infrastructure**
 
-```dockerfile
-FROM node:20-alpine
-
-WORKDIR /app
-
-COPY package*.json ./
-RUN npm install
-
-COPY . .
-
-CMD ["npm", "run", "start"]
+```bash
+docker compose up -d postgres
 ```
 
+**4. Install dependencies**
 
-# Sample Frontend .env
+```bash
+npm install
+```
 
-```env
-# Inventory Service
-VITE_INVENTORY_API_BASE_URL=http://localhost:4001
+### Run the Services
 
-# Procurement Service
-VITE_PROCUREMENT_API_BASE_URL=http://localhost:4002
+Start each service in a separate terminal.
+
+**Inventory Service**
+
+```bash
+npm run start:dev --workspace=services/api-server
+```
+
+**Procurement Service**
+
+```bash
+npm run start:dev --workspace=services/publisher
+```
+
+**Frontend Dashboard**
+
+```bash
+npm run dev --workspace=apps/dashboard
+```
+
+Open the dashboard:
+
+```text
+http://localhost:5173
 ```
 
 ---
 
-# Sample Inventory Service .env
+## Environment Configuration
 
-```env
-DB_HOST=localhost
-DB_PORT=5432
-DB_USER=postgres
-DB_PASSWORD=postgres
-DB_NAME=inventory
-DB_SYNC=false
-DB_LOGGING=true
-PORT=3000
-```
+Each service may require environment-specific configuration.
 
----
+Create the required `.env` files in the corresponding service directories.
 
-# Sample Procurement Service .env
+Use `.env.example` files as configuration references when available.
 
-```env
-PORT=3000
-INVENTORY_GRPC_URL=localhost:50051
-REQUIRE_LOW_STOCK_REQUEST=true
-PURCHASE_RECEIVED_QUEUE_URL=""
-STOCK_EVENTS_QUEUE_URL=""
-STOCK_EVENTS_CONSUMER_ENABLED=true
-AWS_REGION=
-AWS_DEFAULT_REGION=
+Never commit sensitive information such as:
 
-```
+- AWS access keys.
+- Database credentials.
+- API secrets.
+- Authentication tokens.
+- Private environment variables.
 
 ---
 
-# Lambda stockInflow .env
+## Project Goals & Learning Outcomes
 
-```env
-USE_SQS=true
-SQS_QUEUE_URL=
-LOG_LEVEL= debug/info/warn/error
-MATERIAL_POOL= (Optional)
-```
+Through this project, the main engineering objectives are:
 
----
-
-# Lambda sqsToInventory .env
-
-```env
-ALB_URL=
-```
+- Understand cloud-native application architecture.
+- Implement microservices communication.
+- Containerize distributed applications.
+- Automate infrastructure provisioning using Terraform.
+- Build CI/CD workflows with GitHub Actions.
+- Understand AWS networking and cloud resources.
+- Explore application deployment and cloud operations.
+- Apply DevOps principles to a practical engineering project.
 
 ---
 
-# Suggested Demo Workflow
-
-1. Open the frontend dashboard.
-2. Show materials with low stock.
-3. Create a purchase request.
-4. Trigger or wait for Lambda stock simulation.
-5. Show stock increasing automatically.
-6. Show alerts being resolved.
-7. Show purchase request lifecycle.
 
 ---
 
-# License
+## Infrastructure & Deployment Strategy
 
-This project is intended for educational, demo, and competition use.
+Stockly is designed with a cloud-native deployment approach to support scalability, reliability, and maintainability.
+
+The deployment strategy focuses on:
+
+- Containerized application services using Docker.
+- Cloud infrastructure provisioning through Terraform.
+- Automated build and deployment workflows using GitHub Actions.
+- Managed database infrastructure using Amazon RDS.
+- Isolated networking through Amazon VPC.
+- Scalable application hosting using Amazon ECS.
+
+The infrastructure is structured to support consistent environments across local development, testing, and cloud deployment.
+
+## Future Engineering Improvements
+
+The following improvements represent potential next steps for expanding the platform:
+
+- **Monitoring & Observability** — Integrate Prometheus and Grafana for infrastructure and application monitoring.
+- **Centralized Logging** — Implement centralized log collection and analysis.
+- **Auto Scaling** — Configure automatic scaling for containerized services.
+- **Security Hardening** — Improve IAM policies, secrets management, and network security.
+- **Infrastructure Automation** — Expand Terraform modules and reusable infrastructure configurations.
+- **Deployment Strategy** — Explore rolling deployments and blue-green deployment approaches.
+- **Disaster Recovery** — Introduce database backup and recovery strategies.
+
+---
